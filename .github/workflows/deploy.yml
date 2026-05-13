@@ -28,15 +28,15 @@ jobs:
 
       - name: Export Web
         run: |
-          godot --path . --editor --headless --quit
-          godot --headless --export-release "Web" --verbose
-          tree .
+          godot --path .\project.godot --editor --headless --quit
+          godot --headless --path .\project.godot --export-release "Web" --verbose .\exports\web\
+          dir .\build\web
 
       - name: Fix structure
         run: |
           mkdir public
           move build\web\* public\
-          tree .
+          dir .\build\web
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

@@ -29,7 +29,7 @@ jobs:
       - name: Export Web
         run: |
           godot --path .\project.godot --editor --headless --quit
-          godot --headless --path .\project.godot --export-release "Web" --verbose .\exports\web\
+          godot --headless --path .\project.godot --export-release "Web" --verbose .\exports\web\index.html
           dir .\build\web
 
       - name: Fix structure

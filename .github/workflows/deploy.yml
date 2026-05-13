@@ -28,7 +28,8 @@ jobs:
 
       - name: Export Web
         run: |
-          godot --headless --export-release "Web"
+          godot --path . --editor --headless --quit
+          godot --headless --export-release "Web" --verbose
           tree .
 
       - name: Fix structure

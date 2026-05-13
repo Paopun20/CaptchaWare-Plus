@@ -57,6 +57,14 @@ const random_emails = [
 	"impossiblechris@gmail.com"
 ]
 
+func get_platform() -> String:
+	if OS.has_feature("web"):
+		return "web"
+	elif OS.has_feature("mobile"):
+		return "mobile"
+	else:
+		return "pc"
+
 func _ready() -> void:
 	if GameData.stored_data.played_intro:
 		start_with_no_intro()
@@ -72,24 +80,35 @@ func intro_cutscene_start() -> void:
 	change_text_box_intro()
 	cur_text_node.text = random_emails.pick_random()
 
-func _input(event: InputEvent) -> void:
-	if !(intro_cutscene && event is InputEventKey): return
+func advance_intro() -> void:
+	if cur_text_node.visible_characters == 0:
+		cur_text_node.get_parent().placeholder_text = ""
 	
-	if event.is_pressed() && !event.is_echo() && !Input.is_action_just_pressed("ui_text_submit"):
-		if cur_text_node.visible_characters == 0:
-			cur_text_node.get_parent().placeholder_text = ""
-		cur_text_node.visible_characters += 1
-	
+	cur_text_node.visible_characters += 1
+
 	if cur_text_node.visible_characters >= cur_text_node.get_total_character_count():
 		cur_text_node.get_parent().modulate = Color("d8d8d8ff")
 		
 		if cur_tab_text_typing >= 2:
 			captcha_animation_player.play("intro_cutscene_2")
 			intro_cutscene = false
-			
 			GameData.stored_data.played_intro = true
 		else:
 			change_text_box_intro()
+
+func _input(event: InputEvent) -> void:
+	if !(intro_cutscene): 
+		return
+	
+	# ⌨️ Keyboard (PC)
+	if event is InputEventKey:
+		if event.is_pressed() and !event.is_echo() and !Input.is_action_just_pressed("ui_text_submit"):
+			advance_intro()
+	
+	# 👆 Touch (Mobile / Web mobile)
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			advance_intro()
 
 func change_text_box_intro() -> void:
 	cur_text_node = email_n_password.get_child(cur_tab_text_typing).get_child(0)

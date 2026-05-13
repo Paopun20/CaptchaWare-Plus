@@ -28,15 +28,18 @@ jobs:
 
       - name: Export Web
         run: |
-          godot --path .\project.godot --editor --headless --quit
-          godot --headless --path .\project.godot --export-release "Web" --verbose .\exports\web\index.html
+          godot --headless --path . --editor --quit
+          godot --headless --path . --export-release "Web" --verbose build\web\index.html
           dir .\build\web
 
       - name: Fix structure
         run: |
           mkdir public
           move build\web\* public\
-          dir .\build\web
+          dir .\public
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
@@ -45,7 +48,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     environment:
       name: github-pages
